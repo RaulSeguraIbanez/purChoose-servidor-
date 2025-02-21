@@ -15,36 +15,32 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // Validamos los datos recibidos.
         $request->validate([
-            'nombre'         => 'required|string|max:19',
-            'apellidos'      => 'required|string|max:30',
-            'email'          => 'required|string|email|max:50|unique:usuarios',
-            'password'       => 'required|string|min:6|max:25|confirmed',
+            'nombre'    => 'required|string|max:50',
+            'email'     => 'required|string|email|max:50|unique:usuarios',
+            'prefijo'   => 'required|string',
+            'telefono'  => 'nullable|string|max:20',
+            'password'  => 'required|string|min:6|max:25|confirmed',
         ]);
 
-        // Concatenamos "nombre" y "apellidos".
-        $nombreCompleto = $request->nombre . ' ' . $request->apellidos;
+        // Concatenamos el prefijo con el número de teléfono
+        $telefonoCompleto = $request->telefono ? $request->prefijo . $request->telefono : null;
 
-        // Creamos el usuario.
+        // Crear el usuario
         $user = User::create([
-            'nombre'       => $nombreCompleto,
+            'nombre'       => $request->nombre,
             'email'        => $request->email,
+            'telefono'     => $telefonoCompleto,
             'password'     => Hash::make($request->password),
-            // Asignamos un rol por defecto (puedes ajustar según tu lógica)
             'role'         => 'usuario',
-            // Establecemos la fecha de registro actual
             'fechaRegistro' => now(),
-            // Puedes incluir otros campos si están disponibles en el request (ubicacion, telefono, etc.)
+            'fotoPerfil'   => 'storage/images/userProfPic/user_profilepic_default.jpg',
         ]);
 
-        // Opcional: iniciar sesión automáticamente tras el registro.
         Auth::login($user);
 
-        // Redirigimos o retornamos una respuesta según convenga.
         return redirect()->intended('/dashboard')->with('success', 'Usuario registrado exitosamente');
     }
-
     /**
      * Inicio de sesión.
      */

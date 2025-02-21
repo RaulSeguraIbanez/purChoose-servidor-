@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 50);
+            $table->string('nombre', 50); // Ahora solo "nombre"
             $table->string('email', 50)->unique();
-            $table->string('password', 255); // Guardaremos el hash de la contraseña
+            $table->string('password', 255);
             $table->enum('role', ['admin', 'usuario'])->default('usuario');
             $table->timestamp('fechaRegistro')->useCurrent();
             $table->string('ubicacion')->nullable();
             $table->string('telefono', 20)->nullable();
-            $table->string('fotoPerfil')->nullable();
+            $table->string('fotoPerfil')->default('storage/images/userProfPic/user_profilepic_default.jpg'); // Imagen por defecto
             $table->timestamps();
         });
     }

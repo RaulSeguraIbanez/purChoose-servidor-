@@ -46,24 +46,24 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validamos las credenciales.
         $request->validate([
-            'email'    => 'required|string|email|max:50',
-            'password' => 'required|string|max:25',
+            'email'    => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->email)->first();
 
-        // Intentamos autenticar al usuario.
-        if (Auth::attempt($credentials)) {
-            // Regeneramos la sesión para evitar fijación de sesión.
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard')->with('success', 'Inicio de sesión exitoso');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        // Si las credenciales no coinciden, retornamos con error.
-        return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no son correctas.',
+        // Generar token de acceso personal
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Inicio de sesión exitoso',
+            'token' => $token,
+            'user' => $user
         ]);
     }
 

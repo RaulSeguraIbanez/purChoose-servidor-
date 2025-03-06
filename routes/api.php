@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\confPerfil;
+use App\Http\Controllers\productosController;
 
 
 /*
@@ -27,12 +28,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+/*Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    /*Route::get('/perfil', function (Request $request) {
+    Route::get('/perfil', function (Request $request) {
         return response()->json($request->user());
     });
-*/});
+}); */
+
+Route::get('/productos', [productosController::class, 'indexProductos']);
+Route::post('/productos', [productosController::class, 'storeProducto']);
+
+Route::get('/categorias', [productosController::class, 'indexCategorias']);
+Route::post('/categorias', [productosController::class, 'storeCategoria']);
 
 Route::apiResource('perfil', confPerfil::class);
 

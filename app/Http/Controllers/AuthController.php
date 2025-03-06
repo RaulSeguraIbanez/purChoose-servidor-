@@ -6,18 +6,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
-
 {
-    /**
-     * Registro de usuario.
-     */
     public function register(Request $request)
     {
-        $request->validate([
-            'nombre'    => 'required|string|max:50',
-            'email'     => 'required|string|email|max:50|unique:usuarios',
+        // Validación de los datos del formulario
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|string|max:50',
+            'email'     => 'required|string|email|max:50|unique:users,email', // Asegúrate de usar la tabla correcta
             'prefijo'   => 'required|string',
             'telefono'  => 'nullable|string|max:20',
             'password'  => 'required|string|min:6|max:25|confirmed',
@@ -27,8 +25,9 @@ class AuthController extends Controller
         $telefonoCompleto = $request->telefono ? $request->prefijo . $request->telefono : null;
 
         // Crear el usuario
+
         $user = User::create([
-            'nombre'       => $request->nombre,
+            'name'       => $request->name,
             'email'        => $request->email,
             'telefono'     => $telefonoCompleto,
             'password'     => Hash::make($request->password),
@@ -37,22 +36,32 @@ class AuthController extends Controller
             'fotoPerfil'   => 'storage/images/userProfPic/user_profilepic_default.jpg',
         ]);
 
-        Auth::login($user);
+        // Generar token de acceso personal
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return redirect()->intended('/dashboard')->with('success', 'Usuario registrado exitosamente');
+        // Devolver respuesta JSON
+        return response()->json([
+            'message' => 'Usuario registrado exitosamente',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
     }
+
     /**
      * Inicio de sesión.
      */
     public function login(Request $request)
     {
+        // Validación de los datos del formulario
         $request->validate([
             'email'    => 'required|string|email',
             'password' => 'required|string',
         ]);
 
+        // Buscar al usuario por correo electrónico
         $user = User::where('email', $request->email)->first();
 
+        // Verificar credenciales
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
@@ -60,10 +69,11 @@ class AuthController extends Controller
         // Generar token de acceso personal
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Devolver respuesta JSON
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
             'token' => $token,
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -72,11 +82,10 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        // Revocar el token actual
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login')->with('success', 'Sesión cerrada correctamente.');
+        // Devolver respuesta JSON
+        return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
 }

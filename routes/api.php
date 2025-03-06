@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\confPerfil;
 
 
 /*
@@ -32,4 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json($request->user());
     });
 */});
+
+Route::apiResource('perfil', confPerfil::class);
 

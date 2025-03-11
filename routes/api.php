@@ -44,5 +44,7 @@ Route::post('/categorias', [productosController::class, 'storeCategoria']);
 
 Route::apiResource('perfil', confPerfil::class);
 
+
+//Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion
 Route::get('/usuario/{id}', [perfilPotatoController::class, 'show']);
 Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);

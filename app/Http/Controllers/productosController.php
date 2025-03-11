@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
+use Illuminate\Support\Facades\Validator;
 
 class productosController extends Controller
 {
@@ -19,10 +20,10 @@ class productosController extends Controller
     // Crear un producto con categorías asociadas
     public function storeProducto(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
             'descripcion' => 'nullable|string',
-            'precio' => 'required|integer',
+            'precio' => 'required|float',
             'estado' => 'required|string',
             'oferta' => 'boolean',
             'user_id' => 'required|exists:users,id',
@@ -30,11 +31,12 @@ class productosController extends Controller
             'categorias.*' => 'exists:categorias,id',
         ]);
 
+        // Crear el producto sin las categorías
         $producto = Producto::create($request->except('categorias'));
 
-        // Si se envían categorías, asociarlas
+        // Asociar el producto con las categorías (tabla intermedia cate_prod)
         if ($request->has('categorias')) {
-            $producto->categorias()->attach($request->categorias);
+            $producto->categorias()->sync($request->categorias);
         }
 
         return response()->json(['message' => 'Producto creado correctamente', 'producto' => $producto], 201);
@@ -43,8 +45,7 @@ class productosController extends Controller
     // Obtener todas las categorías con sus productos
     public function indexCategorias()
     {
-        $categorias = Categoria::with('productos')->get();
-
+        $categorias = Categoria::all();
         return response()->json($categorias);
     }
 

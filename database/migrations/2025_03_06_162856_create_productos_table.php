@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('descripcion');
-            $table->integer('precio');
+            $table->float('precio');
             $table->string('estado');
             $table->boolean('oferta')->default(false);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

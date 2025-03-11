@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\confPerfil;
 use App\Http\Controllers\productosController;
+use App\Http\Controllers\perfilPotatoController;
 
 
 /*
@@ -18,9 +19,9 @@ use App\Http\Controllers\productosController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-});
+}); */
 
 
 //Rutas para API
@@ -43,3 +44,5 @@ Route::post('/categorias', [productosController::class, 'storeCategoria']);
 
 Route::apiResource('perfil', confPerfil::class);
 
+Route::get('/usuario/{id}', [perfilPotatoController::class, 'show']);
+Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);

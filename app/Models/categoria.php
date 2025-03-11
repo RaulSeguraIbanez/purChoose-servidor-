@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class categoria extends Model
+class Categoria extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'descripcion', 'precio', 'estado', 'oferta', 'user_id'];
+    protected $fillable = ['nombre'];
 
-    public function categorias()
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
+
+    public function productos()
     {
-        return $this->belongsToMany(Categoria::class, 'cate_prod');
+       return $this->belongsToMany(Producto::class, 'cate_prod', 'categoria_id', 'producto_id');
     }
 }

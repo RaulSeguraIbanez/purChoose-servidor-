@@ -16,7 +16,7 @@ use App\Http\Controllers\AuthController;
 */
 
 Route::get('/', function () {
-    return view('auth.register');
+    return view('welcome');
 });
 
 // Página de registro (puedes tener una vista para ello)
@@ -40,5 +40,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Ruta protegida de ejemplo
 Route::middleware('auth')->get('/dashboard', function () {
-    return view('dashboard');
+    return view('register');
 });

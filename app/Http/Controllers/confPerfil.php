@@ -47,6 +47,7 @@ class confPerfil extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'telefono' => $telefonoCompleto,
+                'ubicacion' => $request->ubicacion,
                 'password' => $request->password ? Hash::make($request->password) : $usuario->password,
             ]);
 

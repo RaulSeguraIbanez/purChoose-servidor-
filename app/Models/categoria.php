@@ -9,7 +9,7 @@ class Categoria extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'imagen'];
 
     protected $hidden = ['created_at', 'updated_at', 'pivot'];
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\confPerfil;
 use App\Http\Controllers\productosController;
 use App\Http\Controllers\perfilPotatoController;
 use App\Http\Controllers\categoriasController;
+use App\Http\Controllers\opinionPotatoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,10 @@ Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
 
 Route::apiResource('perfil', confPerfil::class);
+
+
+Route::get('/opiniones/{product_id}', [opinionPotatoController::class, 'index']);
+Route::post('/opiniones', [opinionPotatoController::class, 'store']);
 
 
 //Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion

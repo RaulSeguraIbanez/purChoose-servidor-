@@ -20,7 +20,7 @@ class opinionPotato extends Model
     // Relaciones
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Producto::class);
     }
 
     public function user()

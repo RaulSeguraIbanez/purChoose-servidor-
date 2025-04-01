@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('opinion_potato', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id'); // Relación con producto
-            $table->unsignedBigInteger('user_id'); // Relación con usuario
             $table->string('opinion'); // Opinion del usuario
             $table->timestamps();
 
             // Claves foráneas
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('productos')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
         });
     }
 

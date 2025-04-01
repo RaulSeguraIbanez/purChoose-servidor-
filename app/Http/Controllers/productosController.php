@@ -42,4 +42,23 @@ class productosController extends Controller
         return response()->json(['message' => 'Producto creado correctamente', 'producto' => $producto], 201);
     }
 
+    public function getProductosByCategorias(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'categorias' => 'required|array',
+            'categorias.*' => 'exists:categorias,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Obtener los productos que pertenezcan a las categorías enviadas
+        $productos = Producto::whereHas('categorias', function ($query) use ($request) {
+            $query->whereIn('categorias.id', $request->categorias);
+        })->with('categorias')->get();
+
+        return response()->json($productos);
+    }
+
 }

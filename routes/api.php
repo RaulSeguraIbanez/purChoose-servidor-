@@ -40,8 +40,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/productos', [productosController::class, 'indexProductos']);
 Route::post('/productos', [productosController::class, 'storeProducto']);
 
+
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
+Route::post('/categorias/productos', [productosController::class, 'getProductosByCategorias']);
+
 
 Route::apiResource('perfil', confPerfil::class);
 
@@ -56,4 +59,3 @@ Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);*/
 
 Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
-    

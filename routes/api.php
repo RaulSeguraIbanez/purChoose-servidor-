@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\confPerfil;
 use App\Http\Controllers\productosController;
 use App\Http\Controllers\perfilPotatoController;
-
+use App\Http\Controllers\categoriasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +39,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/productos', [productosController::class, 'indexProductos']);
 Route::post('/productos', [productosController::class, 'storeProducto']);
 
-Route::get('/categorias', [productosController::class, 'indexCategorias']);
-Route::post('/categorias', [productosController::class, 'storeCategoria']);
+Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
+Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
 
 Route::apiResource('perfil', confPerfil::class);
 

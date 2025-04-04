@@ -18,6 +18,7 @@ class ProductoFactory extends Factory
             'precio' => $this->faker->randomFloat(2, 5, 1000),
             'estado' => $this->faker->randomElement(['Nuevo', 'Usado', 'Reacondicionado']),
             'oferta' => $this->faker->boolean(),
+            'individual' => $this->faker->boolean(),
             'user_id' => User::factory(),
         ];
     }

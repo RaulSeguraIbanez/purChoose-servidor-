@@ -47,6 +47,43 @@ class AuthController extends Controller
         ], 201);
     }
 
+    public function registerBusiness(Request $request)
+    {
+        // Validación de los datos del formulario
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|string|max:50',
+            'email'     => 'required|string|email|max:50|unique:users,email', // Asegúrate de usar la tabla correcta
+            'prefijo'   => 'required|string',
+            'telefono'  => 'nullable|string|max:20',
+            'password'  => 'required|string|min:6|max:25|confirmed',
+        ]);
+
+        // Concatenamos el prefijo con el número de teléfono
+        $telefonoCompleto = $request->telefono ? $request->prefijo . $request->telefono : null;
+
+        // Crear el usuario
+
+        $user = User::create([
+            'name'       => $request->name,
+            'email'        => $request->email,
+            'telefono'     => $telefonoCompleto,
+            'password'     => Hash::make($request->password),
+            'role'         => 'empresaurio',
+            'fechaRegistro' => now(),
+            'fotoPerfil'   => 'storage/images/userProfPic/user_profilepic_default.jpg',
+        ]);
+
+        // Generar token de acceso personal
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Devolver respuesta JSON
+        return response()->json([
+            'message' => 'Usuario registrado exitosamente',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
+    }
+
     /**
      * Inicio de sesión.
      */

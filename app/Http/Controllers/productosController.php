@@ -61,4 +61,14 @@ class productosController extends Controller
         return response()->json($productos);
     }
 
+    public function showProductoDetallado($id)
+    {
+        $producto = Producto::with(['categorias', 'opiniones.user'])->find($id);
+
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json($producto);
+    }
 }

@@ -28,6 +28,7 @@ use App\Http\Controllers\opinionPotatoController;
 //Rutas para API
 
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/registerBusiness', [AuthController::class, 'registerBusiness']);
 Route::post('/login', [AuthController::class, 'login']);
 
 /*Route::middleware('auth:sanctum')->group(function () {
@@ -39,6 +40,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/productos', [productosController::class, 'indexProductos']);
 Route::post('/productos', [productosController::class, 'storeProducto']);
+
+Route::get('/productos/{id}/detalles', [productosController::class, 'showProductoDetallado']);
 
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);

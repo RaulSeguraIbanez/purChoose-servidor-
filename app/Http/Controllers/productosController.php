@@ -26,6 +26,7 @@ class productosController extends Controller
             'precio' => 'required|float',
             'estado' => 'required|string',
             'oferta' => 'boolean',
+            'ubicacion' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
             'categorias' => 'array', // Debe ser un array de IDs de categorías
             'categorias.*' => 'exists:categorias,id',

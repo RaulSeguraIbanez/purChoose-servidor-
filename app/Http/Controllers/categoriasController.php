@@ -19,6 +19,7 @@ class categoriasController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|unique:categorias,nombre',
+            'imagen' => 'required|string'
         ]);
 
         $categoria = Categoria::create($request->all());

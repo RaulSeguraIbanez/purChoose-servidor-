@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->integer('cantidad')->default(1);
-            $table->string('estado', ['admin', 'usuario','empresaurio']) ->default('no pagado'); // 'pagado', 'no pagado', 'recibido', 'enviado', 'cancelado'
+            $table->string('estado', ['pagado', 'no pagado','recibido', 'enviado', 'cancelado']) ->default('no pagado'); // 'pagado', 'no pagado', 'recibido', 'enviado', 'cancelado'
         });
     }
 

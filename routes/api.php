@@ -43,6 +43,7 @@ Route::get('/productos', [productosController::class, 'indexProductos']);
 Route::post('/productos', [productosController::class, 'storeProducto']);
 
 Route::get('/productos/{id}/detalles', [productosController::class, 'showProductoDetallado']);
+Route::post('/productos/{id}/upload-images', [productosController::class, 'storeImages']);
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);

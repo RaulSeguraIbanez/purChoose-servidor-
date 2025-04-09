@@ -8,6 +8,7 @@ use App\Http\Controllers\productosController;
 use App\Http\Controllers\perfilPotatoController;
 use App\Http\Controllers\categoriasController;
 use App\Http\Controllers\opinionPotatoController;
+use App\Http\Controllers\carritoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,18 +44,20 @@ Route::post('/productos', [productosController::class, 'storeProducto']);
 
 Route::get('/productos/{id}/detalles', [productosController::class, 'showProductoDetallado']);
 
-
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
 Route::post('/categorias/productos', [productosController::class, 'getProductosByCategorias']);
 
-
 Route::apiResource('perfil', confPerfil::class);
-
 
 Route::get('/opiniones/{product_id}', [opinionPotatoController::class, 'index']);
 Route::post('/opiniones', [opinionPotatoController::class, 'store']);
 
+// Listar items del carrito de un usuario
+Route::get('/carrito/{user_id}', [CarritoController::class, 'index']);
+Route::post('/carrito', [carritoController::class, 'store']);
+Route::put('/carrito/{id}', [carritoController::class, 'update']);
+Route::delete('/carrito/{id}', [carritoController::class, 'destroy']);
 
 //Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion
 /*Route::get('/usuario/{id}', [perfilPotatoController::class, 'show']);

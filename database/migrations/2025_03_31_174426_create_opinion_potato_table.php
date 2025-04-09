@@ -17,8 +17,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Claves foráneas
-            $table->foreignId('product_id')->constrained('productos')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('productos')->onDelete('cascade');                                                                            //relacionar cada opinion con un producto
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');                                                                                  // pa saber que cada opinion tenga un usuario
         });
     }
 

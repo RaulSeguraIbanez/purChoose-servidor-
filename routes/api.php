@@ -44,13 +44,16 @@ Route::post('/productos', [productosController::class, 'storeProducto']);
 
 Route::get('/productos/{id}/detalles', [productosController::class, 'showProductoDetallado']);
 Route::post('/productos/{id}/upload-images', [productosController::class, 'storeImages']);
+Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProducto']);
+Route::get('/productos/{id}/with-images', [productosController::class, 'getProductoWithImages']);
+Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
 Route::post('/categorias/productos', [productosController::class, 'getProductosByCategorias']);
 
 Route::apiResource('perfil', confPerfil::class);
-
+Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProducto']);
 Route::get('/opiniones/{product_id}', [opinionPotatoController::class, 'index']);
 Route::post('/opiniones', [opinionPotatoController::class, 'store']);
 

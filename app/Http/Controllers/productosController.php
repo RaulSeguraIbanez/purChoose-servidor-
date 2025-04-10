@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\ImagePr; // Cambia "ImagenPr" por "ImagePr"
+use App\Models\ImagePr; //"ImagePr"
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -68,6 +68,28 @@ class productosController extends Controller
             'producto' => $producto,
         ], 201);
     }
+    // Obtener todos los productos con sus categorías e imágenes
+public function getProductsWithCategoriesAndImages()
+{
+    // Cargar productos con sus relaciones
+    $productos = Producto::with(['categorias', 'imagenes'])->get();
+
+    // Formatear las imágenes para incluir URLs absolutas
+    $productos = $productos->map(function ($producto) {
+        $producto->imagenes = $producto->imagenes->map(function ($imagen) {
+            return [
+                'id' => $imagen->id,
+                'url' => asset($imagen->url), // Genera una URL absoluta
+            ];
+        });
+        return $producto;
+    });
+
+    return response()->json([
+        'message' => 'Productos obtenidos correctamente',
+        'productos' => $productos,
+    ], 200);
+}
     public function storeImages(Request $request, $productoId)
     {
         $validator = Validator::make($request->all(), [
@@ -109,7 +131,32 @@ class productosController extends Controller
 
         return response()->json($productos);
     }
+// Obtener todas las imágenes asociadas a un producto específico
+public function getImagesByProducto($productoId)
+{
+    // Buscar el producto por su ID
+    $producto = Producto::find($productoId);
 
+    if (!$producto) {
+        return response()->json(['error' => 'Producto no encontrado'], 404);
+    }
+
+    // Obtener las imágenes asociadas al producto
+    $imagenes = $producto->imagenes; // Usando la relación definida en el modelo Producto
+
+    // Formatear las imágenes para devolver solo las URLs
+    $urls = $imagenes->map(function ($imagen) {
+        return [
+            'id' => $imagen->id,
+            'url' => $imagen->url,
+        ];
+    });
+
+    return response()->json([
+        'message' => 'Imágenes obtenidas correctamente',
+        'imagenes' => $urls,
+    ], 200);
+}
     // Mostrar detalles de un producto específico
     public function showProductoDetallado($id)
     {

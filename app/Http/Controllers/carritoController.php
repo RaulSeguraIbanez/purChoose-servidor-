@@ -51,28 +51,38 @@ class carritoController extends Controller
     //    Body JSON: { "cantidad": 3, "estado": "pagado" }
     public function update(Request $request, $id)
     {
-        $carrito = Carrito::findOrFail($id);
-
-        // Validar sólo lo que te interesa actualizar
-        $request->validate([
-            'cantidad' => 'integer|min:1|nullable',
-            'estado'   => 'in:pagado,no pagado,recibido,enviado,cancelado|nullable'
-        ]);
-
-        if ($request->has('cantidad')) {
-            $carrito->cantidad = $request->cantidad;
+        try {
+            $carrito = Carrito::findOrFail($id);
+    
+            // Validar sólo lo que te interesa actualizar
+            $request->validate([
+                'cantidad' => 'integer|min:1|nullable',
+                'estado'   => 'in:pagado,no pagado,recibido,enviado,cancelado|nullable'
+            ]);
+    
+            if ($request->has('cantidad')) {
+                \Log::info('Actualizando cantidad:', ['id' => $id, 'cantidad' => $request->cantidad]);
+                $carrito->cantidad = $request->cantidad;
+            }
+    
+            if ($request->has('estado')) {
+                \Log::info('Actualizando estado:', ['id' => $id, 'estado' => $request->estado]);
+                $carrito->estado = $request->estado;
+            }
+    
+            $carrito->save();
+    
+            return response()->json([
+                'message' => 'Carrito actualizado',
+                'data'    => $carrito
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar el carrito:', ['id' => $id, 'error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Ocurrió un error inesperado',
+                'error'   => $e->getMessage()
+            ], 500);
         }
-
-        if ($request->has('estado')) {
-            $carrito->estado = $request->estado;
-        }
-
-        $carrito->save();
-
-        return response()->json([
-            'message' => 'Carrito actualizado',
-            'data'    => $carrito
-        ]);
     }
 
     // 4. Eliminar un producto del carrito

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\ImagePr; //"ImagePr"
+use App\Models\ImagePr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -89,7 +89,7 @@ public function getProductsWithCategoriesAndImages()
         'message' => 'Productos obtenidos correctamente',
         'productos' => $productos,
     ], 200);
-}
+}    
     public function storeImages(Request $request, $productoId)
     {
         $validator = Validator::make($request->all(), [
@@ -104,7 +104,7 @@ public function getProductsWithCategoriesAndImages()
             $imageName = time() . '_' . $image->getClientOriginalName();
             $path = $image->storeAs('public/images/productImages', $imageName);
 
-            $imagenPr = new ImagePr(); // Cambia "ImagenPr" por "ImagePr"
+            $imagenPr = new ImagePr(); 
             $imagenPr->url = Storage::url($path);
             $imagenPr->producto_id = $productoId;
             $imagenPr->save();

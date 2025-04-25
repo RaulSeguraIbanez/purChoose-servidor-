@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage; // Importa Storage para manejar archivos
 use Exception;
 
 class confPerfil extends Controller
@@ -58,57 +60,67 @@ class confPerfil extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
-    {
-        try {
-            $usuario = User::find($id);
-
-            if (!$usuario) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Usuario no encontrado'
-                ], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'name'    => 'required|string|max:50',
-                'email'     => 'required|string|email|max:50|unique:users,email,' . $id,
-                'prefijo'   => 'required|string',
-                'telefono'  => 'nullable|string|max:20',
-                'password'  => 'nullable|string|min:6|max:25|confirmed',
-                'password_confirmation' => 'nullable|string|min:6|max:25'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Errores en la validación de datos',
-                    'errors'  => $validator->errors()
-                ], 422);
-            }
-
-            // Concatenar teléfono y prefijo
-            $telefonoCompleto = $request->telefono ? $request->prefijo . $request->telefono : null;
-
-            // Actualizar usuario
-            $usuario->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'telefono' => $telefonoCompleto,
-                'ubicacion' => $request->ubicacion,
-                'password' => $request->password ? Hash::make($request->password) : $usuario->password,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario actualizado exitosamente',
-                'user' => $usuario
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error inesperado al actualizar el usuario',
-                'error'   => $e->getMessage()
-            ], 500);
+{
+    try {
+        $usuario = User::find($id);
+        if (!$usuario) {
+            return response()->json(['success' => false, 'message' => 'Usuario no encontrado'], 404);
         }
+
+        // Validar los datos recibidos
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:50',
+            'email' => 'required|string|email|max:50|unique:users,email,' . $id,
+            'prefijo' => 'required|string',
+            'telefono' => 'nullable|string',
+            'ubicacion' => 'required|string',
+            'password' => 'nullable|string|min:8|confirmed',
+            'fotoPerfil' => 'nullable|string', // Imagen codificada en Base64
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
+        }
+
+        // Guardar los datos básicos
+        $usuario->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'telefono' => $request->telefono,
+            'ubicacion' => $request->ubicacion,
+            'password' => $request->password ? Hash::make($request->password) : $usuario->password,
+        ]);
+
+        // Manejar la carga de la imagen
+        if ($request->fotoPerfil) {
+            // Eliminar la imagen anterior si existe
+            if ($usuario->fotoPerfil) {
+                Storage::delete(str_replace('storage', 'public', $usuario->fotoPerfil));
+            }
+
+            // Decodificar la imagen Base64
+            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->fotoPerfil));
+
+            // Guardar la imagen en el sistema de archivos
+            $imageName = 'user_' . $id . '_' . time() . '.png'; // Nombre único para la imagen
+            Storage::disk('public')->put('Images/userProfPic/' . $imageName, $imageData);
+
+            // Guardar la URL en la base de datos
+            $usuario->update(['fotoPerfil' => '/storage/Images/userProfPic/' . $imageName]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario actualizado exitosamente',
+            'user' => $usuario,
+        ], 200);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Ocurrió un error inesperado al actualizar el usuario',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 }

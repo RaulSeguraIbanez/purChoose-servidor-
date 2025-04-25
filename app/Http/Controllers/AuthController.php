@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage; // Importa Storage para manejar archivos
 
 class AuthController extends Controller
 {
@@ -70,7 +71,7 @@ class AuthController extends Controller
             'password'     => Hash::make($request->password),
             'role'         => 'empresaurio',
             'fechaRegistro' => now(),
-            'fotoPerfil'   => 'storage/images/userProfPic/user_profilepic_default.jpg',
+            'fotoPerfil'   => '/storage/images/userProfPic/user_profilepic_default.jpg',
         ]);
 
         // Generar token de acceso personal

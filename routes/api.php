@@ -8,6 +8,7 @@ use App\Http\Controllers\productosController;
 use App\Http\Controllers\perfilPotatoController;
 use App\Http\Controllers\categoriasController;
 use App\Http\Controllers\opinionPotatoController;
+use App\Http\Controllers\valoracionPotatoController;
 use App\Http\Controllers\carritoController;
 
 /*
@@ -69,3 +70,13 @@ Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);*/
 
 Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
+
+
+
+/* p0tATo Secti0n */
+
+// Rutas de valoraciones
+Route::get('/valoraciones/{producto_id}', [valoracionPotatoController::class, 'index']);
+Route::post('/valoraciones', [valoracionPotatoController::class, 'store']);
+// enseña el producto con su valoracion good
+Route::get('/productos/{id}', [productosController::class, 'showProductinhoPotato']);

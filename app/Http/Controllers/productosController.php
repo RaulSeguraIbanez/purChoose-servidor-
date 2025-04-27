@@ -168,4 +168,21 @@ public function getImagesByProducto($productoId)
 
         return response()->json($producto);
     }
+
+    // potatoProducto
+    public function showProductinhoPotato($id)
+    {
+        $producto = Producto::with([
+            'categorias',
+            'imagenes',         // Añadimos imágenes también si quieres mostrar todo junto
+            'opiPotatoe.user',    // Opiniones con el usuario que opinó
+            'valorinhaGood.usuario' // Valoraciones con el usuario que valoró
+        ])->find($id);
+
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json($producto);
+    }
 }

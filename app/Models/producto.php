@@ -85,4 +85,20 @@ class Producto extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+
+    //potatoProducto
+    //Devuelve todas las opis y valoraciones de un producto
+    //VAL. N2
+    public function opiPotatoe()
+    {
+        return $this->hasMany(opinionPotato::class, 'product_id');
+    }
+    
+    public function valorinhaGood()
+    {
+        return $this->hasMany(valoracionPotato::class, 'producto_id');
+    }
+    
+
 }

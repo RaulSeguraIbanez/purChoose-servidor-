@@ -11,6 +11,7 @@ use App\Http\Controllers\opinionPotatoController;
 use App\Http\Controllers\valoracionPotatoController;
 use App\Http\Controllers\carritoController;
 use App\Http\Controllers\HistorialController;
+use App\Http\Controllers\MetodoPagoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,7 +84,11 @@ Route::get('/productos/por-usuario/{id}', [ProductosController::class, 'porUsuar
 
 // Rutas para el historial de compras
 
-
+// Rutas para métodos de pago
+Route::post('/metodos-pago', [MetodoPagoController::class, 'store']); // Guardar un método de pago
+Route::get('/metodos-pago', [MetodoPagoController::class, 'index']); // Obtener métodos de pago del usuario
+Route::delete('/metodos-pago/{id_metodo}', [MetodoPagoController::class, 'destroy']); // Eliminar un método de pago
+Route::put('/metodos-pago/{id}', [MetodoPagoController::class, 'update']); // Actualizar un método de pago
 
 // Listar el historial de un usuario específico
 Route::get('/historial/{user_id}', [HistorialController::class, 'index']);

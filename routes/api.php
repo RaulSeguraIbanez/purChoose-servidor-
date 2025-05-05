@@ -50,13 +50,6 @@ Route::post('/productos/{id}/upload-images', [productosController::class, 'store
 Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProducto']);
 Route::get('/productos/{id}/with-images', [productosController::class, 'getProductoWithImages']);
 Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
-//dddd 
-// Obtener imágenes por ID de producto
-Route::get('/imagenes/producto/{id}', [productosController::class, 'getByProductId']);
-
-// Obtener categorías por ID de producto
-Route::get('/categorias/producto/{id}', [categoriasController::class, 'getByProductId']);
-
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
@@ -70,25 +63,25 @@ Route::post('/opiniones', [opinionPotatoController::class, 'store']);
 // Listar items del carrito de un usuario
 Route::get('/carrito/{user_id}', [CarritoController::class, 'index']);
 Route::post('/carrito', [carritoController::class, 'store']);
-Route::put('/carrito/{user_id}', [carritoController::class, 'update']);
+Route::put('/carrito/{id}', [carritoController::class, 'update']); ///   ****///*/          */
 Route::delete('/carrito/{id}', [carritoController::class, 'destroy']);
-
+Route::put('/carrito/{user_id}', [carritoController::class, 'update']);
 //Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion
 /*Route::get('/usuario/{id}', [perfilPotatoController::class, 'show']);
 Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);*/
 
 Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
-// producto del user
+
+
+// Producto del user
 Route::get('/productos/por-usuario/{id}', [ProductosController::class, 'porUsuario']);
+// obtenemos la imagen del producto por id para poder editar el producto
+Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProductId']);
+// Obtener categorías por ID de producto
+Route::get('/categorias/producto/{id}', [categoriasController::class, 'getByProductId']);
+Route::delete('/productos/{id}', [productosController::class, 'eliminarProductuser']);
 
-// Rutas para el historial de compras
-
-// Rutas para métodos de pago
-Route::post('/metodos-pago', [MetodoPagoController::class, 'store']); // Guardar un método de pago
-Route::get('/metodos-pago', [MetodoPagoController::class, 'index']); // Obtener métodos de pago del usuario
-Route::delete('/metodos-pago/{id_metodo}', [MetodoPagoController::class, 'destroy']); // Eliminar un método de pago
-Route::put('/metodos-pago/{id}', [MetodoPagoController::class, 'update']); // Actualizar un método de pago
 
 // Listar el historial de un usuario específico
 Route::get('/historial/{user_id}', [HistorialController::class, 'index']);
@@ -98,6 +91,14 @@ Route::delete('/historial/{id}', [HistorialController::class, 'destroy']);
 
 // Actualizar un registro del historial por su ID
 Route::put('/historial/{id}', [HistorialController::class, 'update']);
+
+
+// Rutas para métodos de pago
+Route::post('/metodos-pago', [MetodoPagoController::class, 'store']); // Guardar un método de pago
+Route::get('/metodos-pago', [MetodoPagoController::class, 'index']); // Obtener métodos de pago del usuario
+Route::delete('/metodos-pago/{id_metodo}', [MetodoPagoController::class, 'destroy']); // Eliminar un método de pago
+Route::put('/metodos-pago/{id}', [MetodoPagoController::class, 'update']); // Actualizar un método de pago
+
 
 /* p0tATo Secti0n */
 

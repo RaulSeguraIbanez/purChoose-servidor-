@@ -50,24 +50,25 @@ class carritoController extends Controller
     // 3. Actualizar la cantidad o estado de un item del carrito
     //    PUT /api/carrito/{id}
     //    Body JSON: { "cantidad": 3, "estado": "pagado" }
-    public function update(Request $request, $id)
+    public function update(Request $request, $userId)
     {
         try {
-            $carrito = Carrito::findOrFail($id);
-    
-            // Validar sólo lo que te interesa actualizar
+            // Validar que el estado enviado sea válido
             $request->validate([
-                'cantidad' => 'integer|min:1|nullable',
-                'estado'   => 'in:pagado,no pagado,recibido,enviado,cancelado|nullable'
+                'estado' => 'in:pagado,no pagado,recibido,enviado,cancelado|required',
             ]);
     
-            if ($request->has('cantidad')) {
-                \Log::info('Actualizando cantidad:', ['id' => $id, 'cantidad' => $request->cantidad]);
-                $carrito->cantidad = $request->cantidad;
+            // Obtener todos los productos del carrito del usuario
+            $carritos = Carrito::where('user_id', $userId)->get();
+    
+            if ($carritos->isEmpty()) {
+                return response()->json([
+                    'message' => 'No hay productos en el carrito para este usuario',
+                ], 404);
             }
     
-            if ($request->has('estado')) {
-                \Log::info('Actualizando estado:', ['id' => $id, 'estado' => $request->estado]);
+            foreach ($carritos as $carrito) {
+                \Log::info('Actualizando estado:', ['id' => $carrito->id, 'estado' => $request->estado]);
     
                 // Si el estado cambia a "pagado", mover el producto al historial
                 if ($request->estado === 'pagado') {
@@ -82,41 +83,23 @@ class carritoController extends Controller
     
                     // Eliminar el producto del carrito
                     $carrito->delete();
-    
-                    return response()->json([
-                        'message' => 'Producto pagado y movido al historial',
-                    ]);
+                } else {
+                    // Si no es "pagado", simplemente actualiza el estado
+                    $carrito->estado = $request->estado;
+                    $carrito->save();
                 }
-    
-                // Si no es "pagado", simplemente actualiza el estado
-                $carrito->estado = $request->estado;
             }
     
-            $carrito->save();
-    
             return response()->json([
-                'message' => 'Carrito actualizado',
-                'data'    => $carrito
-            ]);
+                'message' => 'Estado del carrito actualizado exitosamente',
+            ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error al actualizar el carrito:', ['id' => $id, 'error' => $e->getMessage()]);
+            \Log::error('Error al actualizar el carrito:', ['userId' => $userId, 'error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Ocurrió un error inesperado',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
-    // 4. Eliminar un producto del carrito
-    //    DELETE /api/carrito/{id}
-    public function destroy($id)
-    {
-        $carrito = Carrito::findOrFail($id);
-        $carrito->delete();
-
-        return response()->json([
-            'message' => 'Producto eliminado del carrito'
-        ]);
     }
 
 }

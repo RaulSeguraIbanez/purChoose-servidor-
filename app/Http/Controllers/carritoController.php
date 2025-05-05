@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Carrito;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Models\Historial;
 
 class carritoController extends Controller
 {
@@ -67,6 +68,27 @@ class carritoController extends Controller
     
             if ($request->has('estado')) {
                 \Log::info('Actualizando estado:', ['id' => $id, 'estado' => $request->estado]);
+    
+                // Si el estado cambia a "pagado", mover el producto al historial
+                if ($request->estado === 'pagado') {
+                    // Crear un registro en la tabla de historial
+                    Historial::create([
+                        'user_id' => $carrito->user_id,
+                        'producto_id' => $carrito->producto_id,
+                        'cantidad' => $carrito->cantidad,
+                        'precio_total' => $carrito->producto->precio * $carrito->cantidad, // Asegúrate de que el modelo Producto tenga un campo 'precio'
+                        'estado' => 'pagado',
+                    ]);
+    
+                    // Eliminar el producto del carrito
+                    $carrito->delete();
+    
+                    return response()->json([
+                        'message' => 'Producto pagado y movido al historial',
+                    ]);
+                }
+    
+                // Si no es "pagado", simplemente actualiza el estado
                 $carrito->estado = $request->estado;
             }
     

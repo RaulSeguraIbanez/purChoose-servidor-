@@ -10,6 +10,7 @@ use App\Http\Controllers\categoriasController;
 use App\Http\Controllers\opinionPotatoController;
 use App\Http\Controllers\valoracionPotatoController;
 use App\Http\Controllers\carritoController;
+use App\Http\Controllers\HistorialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,13 +78,21 @@ Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);*/
 
 Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
-
-
 // producto del user
 Route::get('/productos/por-usuario/{id}', [ProductosController::class, 'porUsuario']);
 
+// Rutas para el historial de compras
 
 
+
+// Listar el historial de un usuario específico
+Route::get('/historial/{user_id}', [HistorialController::class, 'index']);
+
+// Eliminar un registro del historial por su ID
+Route::delete('/historial/{id}', [HistorialController::class, 'destroy']);
+
+// Actualizar un registro del historial por su ID
+Route::put('/historial/{id}', [HistorialController::class, 'update']);
 
 /* p0tATo Secti0n */
 

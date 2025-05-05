@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
 use App\Models\ImagePr; //"ImagePr"
+use App\Models\User; // Import the User model
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -169,6 +170,117 @@ public function getImagesByProducto($productoId)
         return response()->json($producto);
     }
 
+    // productos del usuario ardeiii
+    public function porUsuario($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $productos = Producto::with('imagenes')
+            ->where('user_id', $id)
+            ->get()
+            ->map(function ($producto) {
+                return [
+                    'id' => $producto->id,
+                    'titulo' => $producto->nombre,
+                    'precio' => $producto->precio,
+                    'publicado' => $producto->created_at->format('d/m/Y'),
+                    'modificado' => $producto->updated_at->format('d/m/Y'),
+                    'imagen' => $producto->imagenes->first()
+                    ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
+                    : null,
+
+                ];
+            });
+
+        return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'nombre' => $user->name,
+                'email' => $user->email,
+            ],
+            'productos' => $productos
+        ]);
+    }
+
+    public function eliminarProductuser($id)
+    {
+        $producto = Producto::find($id);
+    
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+    
+        // Obtener todas las imágenes relacionadas
+        $imagenes = ImagePr::where('producto_id', $id)->get();
+    
+        foreach ($imagenes as $img) {
+            // Elimina el archivo del disco si existe
+            $path = storage_path('app/public/images/productImages/' . basename($img->url));
+            if (file_exists($path)) {
+                unlink($path);
+            }
+    
+            // Elimina el registro de la imagen
+            $img->delete();
+        }
+    
+        // Eliminar el producto
+        $producto->delete();
+    
+        return response()->json(['message' => 'Producto eliminado correctamente'], 200);
+    }
+
+    public function editarProductuser(Request $request, $id)
+    {
+        $producto = Producto::find($id);
+
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        // Validar los datos del producto
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'precio' => 'required|numeric|min:0',
+            'estado' => 'required|string|in:nuevo,usado',
+            'oferta' => 'boolean',
+            'ubicacion' => 'nullable|string',
+            'user_id' => 'required|integer|exists:users,id',
+            'categorias' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Actualizar el producto
+        $producto->update($request->except('categorias'));
+
+        // Actualizar las categorías
+        if ($request->has('categorias')) {
+            $producto->categorias()->sync($request->categorias);
+        }
+
+        return response()->json([
+            'message' => 'Producto actualizado correctamente',
+            'producto' => $producto,
+        ], 200);
+    }
+    
+
+
+    public function getByProductId($id)
+    {
+        $imagenes = ImagePr::where('producto_id', $id)->get();
+        return response()->json($imagenes);
+    }
+    
+    // Obtener un producto específico con sus categorías, imágenes y opiniones
     // potatoProducto
     public function showProductinhoPotato($id)
     {
@@ -185,4 +297,5 @@ public function getImagesByProducto($productoId)
 
         return response()->json($producto);
     }
+
 }

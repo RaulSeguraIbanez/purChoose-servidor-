@@ -48,6 +48,13 @@ Route::post('/productos/{id}/upload-images', [productosController::class, 'store
 Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProducto']);
 Route::get('/productos/{id}/with-images', [productosController::class, 'getProductoWithImages']);
 Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
+//dddd 
+// Obtener imágenes por ID de producto
+Route::get('/imagenes/producto/{id}', [productosController::class, 'getByProductId']);
+
+// Obtener categorías por ID de producto
+Route::get('/categorias/producto/{id}', [categoriasController::class, 'getByProductId']);
+
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
@@ -72,6 +79,11 @@ Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
 
 
+// producto del user
+Route::get('/productos/por-usuario/{id}', [ProductosController::class, 'porUsuario']);
+
+
+
 
 /* p0tATo Secti0n */
 
@@ -80,3 +92,4 @@ Route::get('/valoraciones/{producto_id}', [valoracionPotatoController::class, 'i
 Route::post('/valoraciones', [valoracionPotatoController::class, 'store']);
 // enseña el producto con su valoracion good
 Route::get('/productos/{id}', [productosController::class, 'showProductinhoPotato']);
+Route::delete('/productos/{id}', [productosController::class, 'eliminarProductuser']);

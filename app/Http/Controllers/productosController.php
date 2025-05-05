@@ -274,12 +274,21 @@ public function getImagesByProducto($productoId)
     
 
 
-    public function getByProductId($id)
+    // Obtener imágenes por ID de producto
+    public function getImagesByProductId($id)
     {
         $imagenes = ImagePr::where('producto_id', $id)->get();
+    
+        $imagenes = $imagenes->map(function ($imagen) {
+            // Asegúrate de que devuelva la URL completa y correcta
+            return url('storage/images/productImages/' . basename($imagen->url));
+        });
+    
         return response()->json($imagenes);
     }
     
+
+
     // Obtener un producto específico con sus categorías, imágenes y opiniones
     // potatoProducto
     public function showProductinhoPotato($id)

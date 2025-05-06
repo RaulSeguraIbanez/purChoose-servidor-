@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('metodo_pago', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('chat_id')->constrained('chats')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
-            $table->text('message');
+            $table->
             $table->timestamps();
         });
     }

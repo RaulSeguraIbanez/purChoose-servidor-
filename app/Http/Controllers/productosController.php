@@ -90,7 +90,33 @@ public function getProductsWithCategoriesAndImages()
         'message' => 'Productos obtenidos correctamente',
         'productos' => $productos,
     ], 200);
-}    
+}
+
+    public function getProductsWithCategoriesAndImages_Caroussel()
+    {
+        // Obtener 20 productos aleatorios con sus relaciones
+        $productos = Producto::with(['categorias', 'imagenes'])
+            ->inRandomOrder()
+            ->take(20)
+            ->get();
+
+        // Formatear las imágenes para incluir URLs absolutas
+        $productos = $productos->map(function ($producto) {
+            $producto->imagenes = $producto->imagenes->map(function ($imagen) {
+                return [
+                    'id' => $imagen->id,
+                    'url' => asset($imagen->url), // Genera una URL absoluta
+                ];
+            });
+            return $producto;
+        });
+
+        return response()->json([
+            'message' => 'Productos aleatorios obtenidos correctamente',
+            'productos' => $productos,
+        ], 200);
+    }
+
     public function storeImages(Request $request, $productoId)
     {
         $validator = Validator::make($request->all(), [
@@ -105,7 +131,7 @@ public function getProductsWithCategoriesAndImages()
             $imageName = time() . '_' . $image->getClientOriginalName();
             $path = $image->storeAs('public/images/productImages', $imageName);
 
-            $imagenPr = new ImagePr(); 
+            $imagenPr = new ImagePr();
             $imagenPr->url = Storage::url($path);
             $imagenPr->producto_id = $productoId;
             $imagenPr->save();
@@ -209,28 +235,28 @@ public function getImagesByProducto($productoId)
     public function eliminarProductuser($id)
     {
         $producto = Producto::find($id);
-    
+
         if (!$producto) {
             return response()->json(['error' => 'Producto no encontrado'], 404);
         }
-    
+
         // Obtener todas las imágenes relacionadas
         $imagenes = ImagePr::where('producto_id', $id)->get();
-    
+
         foreach ($imagenes as $img) {
             // Elimina el archivo del disco si existe
             $path = storage_path('app/public/images/productImages/' . basename($img->url));
             if (file_exists($path)) {
                 unlink($path);
             }
-    
+
             // Elimina el registro de la imagen
             $img->delete();
         }
-    
+
         // Eliminar el producto
         $producto->delete();
-    
+
         return response()->json(['message' => 'Producto eliminado correctamente'], 200);
     }
 
@@ -271,22 +297,22 @@ public function getImagesByProducto($productoId)
             'producto' => $producto,
         ], 200);
     }
-    
+
 
 
     // Obtener imágenes por ID de producto
     public function getImagesByProductId($id)
     {
         $imagenes = ImagePr::where('producto_id', $id)->get();
-    
+
         $imagenes = $imagenes->map(function ($imagen) {
             // Asegúrate de que devuelva la URL completa y correcta
             return url('storage/images/productImages/' . basename($imagen->url));
         });
-    
+
         return response()->json($imagenes);
     }
-    
+
 
 
     // Obtener un producto específico con sus categorías, imágenes y opiniones

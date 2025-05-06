@@ -49,7 +49,10 @@ Route::get('/productos/{id}/detalles', [productosController::class, 'showProduct
 Route::post('/productos/{id}/upload-images', [productosController::class, 'storeImages']);
 Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProducto']);
 Route::get('/productos/{id}/with-images', [productosController::class, 'getProductoWithImages']);
+
 Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
+Route::get('/productos/with-categories-and-images-caroussel', [productosController::class, 'getProductsWithCategoriesAndImages_Caroussel']);
+
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);

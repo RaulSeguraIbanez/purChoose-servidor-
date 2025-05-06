@@ -129,7 +129,7 @@ public function getProductsWithCategoriesAndImages()
 
         foreach ($request->file('images') as $image) {
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $path = $image->storeAs('public/images/productImages', $imageName);
+            $path = $image->storeAs('/storage/app/public/images/productImages', $imageName);
 
             $imagenPr = new ImagePr();
             $imagenPr->url = Storage::url($path);
@@ -216,7 +216,7 @@ public function getImagesByProducto($productoId)
                     'publicado' => $producto->created_at->format('d/m/Y'),
                     'modificado' => $producto->updated_at->format('d/m/Y'),
                     'imagen' => $producto->imagenes->first()
-                    ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
+                    ? asset('storage/app/public/images/productImages/' . basename($producto->imagenes->first()->url))
                     : null,
 
                 ];
@@ -307,7 +307,7 @@ public function getImagesByProducto($productoId)
 
         $imagenes = $imagenes->map(function ($imagen) {
             // Asegúrate de que devuelva la URL completa y correcta
-            return url('storage/images/productImages/' . basename($imagen->url));
+            return url('storage/app/public/images/productImages/' . basename($imagen->url));
         });
 
         return response()->json($imagenes);

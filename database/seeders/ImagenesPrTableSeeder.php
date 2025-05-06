@@ -12,9 +12,9 @@ class ImagenesPrTableSeeder extends Seeder
     {
         Producto::all()->each(function ($producto) {
             DB::table('imagenes_pr')->insert([
-                ['url' => '/storage/Images/productImages/img1.jpg', 'producto_id' => $producto->id],
-                ['url' => '/storage/Images/productImages/img2.jpg', 'producto_id' => $producto->id],
-                ['url' => '/storage/Images/productImages/img3.jpg', 'producto_id' => $producto->id],
+                ['url' => '/storage/app/public/Images/productImages/img1.jpg', 'producto_id' => $producto->id],
+                ['url' => '/storage/app/public/Images/productImages/img2.jpg', 'producto_id' => $producto->id],
+                ['url' => '/storage/app/public/Images/productImages/img3.jpg', 'producto_id' => $producto->id],
             ]);
         });
     }

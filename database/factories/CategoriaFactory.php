@@ -13,7 +13,7 @@ class CategoriaFactory extends Factory
     {
         return [
             'nombre' => $this->faker->word(),
-            'imagen' => 'storage/categorias/' . $this->faker->imageUrl(200, 200, 'categories'),
+            'imagen' => 'storage/app/public/images/categoryImages/' . $this->faker->imageUrl(200, 200, 'categories'),
         ];
     }
 }

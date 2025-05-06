@@ -102,4 +102,83 @@ class carritoController extends Controller
         }
     }
 
+
+
+    /* Potato section update*/
+
+    public function updateCantidad(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'cantidad' => 'required|integer|min:1'
+            ]);
+
+            $carrito = Carrito::findOrFail($id);
+            $carrito->cantidad = $request->cantidad;
+            $carrito->save();
+
+            return response()->json([
+                'message' => 'Cantidad actualizada correctamente',
+                'data' => $carrito
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar cantidad:', ['id' => $id, 'error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Ocurrió un error inesperado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateEstado(Request $request, $user_id)
+    {
+        try {
+            // Validar solo si estado viene
+            $request->validate([
+                'estado' => 'required|in:pagado,no pagado,recibido,enviado,cancelado'
+            ]);
+
+            // Cargamos también la relación 'producto' para poder usar su precio
+            $carritos = Carrito::with('producto')->where('user_id', $user_id)->get();
+
+            if ($carritos->isEmpty()) {
+                return response()->json([
+                    'message' => 'No hay productos en el carrito para este usuario',
+                ], 404);
+            }
+
+            foreach ($carritos as $carrito) {
+                \Log::info('Actualizando estado:', ['id' => $carrito->id, 'estado' => $request->estado]);
+
+                if ($request->estado === 'pagado') {
+                    Historial::create([
+                        'user_id' => $carrito->user_id,
+                        'producto_id' => $carrito->producto_id,
+                        'cantidad' => $carrito->cantidad,
+                        'precio_total' => $carrito->producto->precio * $carrito->cantidad,
+                        'estado' => 'pagado',
+                    ]);
+
+                    $carrito->delete();
+                } else {
+                    $carrito->estado = $request->estado;
+                    $carrito->save();
+                }
+            }
+
+            return response()->json([
+                'message' => 'Estado del carrito actualizado exitosamente'
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error al actualizar el carrito:', ['user_id' => $user_id, 'error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Ocurrió un error inesperado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+
 }

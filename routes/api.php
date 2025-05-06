@@ -63,8 +63,12 @@ Route::post('/opiniones', [opinionPotatoController::class, 'store']);
 // Listar items del carrito de un usuario
 Route::get('/carrito/{user_id}', [CarritoController::class, 'index']);
 Route::post('/carrito', [carritoController::class, 'store']);
-Route::put('/carrito/{id}', [carritoController::class, 'update']); //para actualizar la cantidad de un producto en el carrito
-Route::put('/carrito/{user_id}', [carritoController::class, 'update']); //para actualizar todos los productos del carrito
+Route::put('/carrito/{id}', [carritoController::class, 'update']); // actualiza la cantidad de un producto en el carrito
+Route::put('/carrito/{user_id}', [carritoController::class, 'update']); //actualiza el estado del carrito
+
+Route::put('/carrito/item/{id}', [carritoController::class, 'updateCantidad']);
+Route::put('/carrito/user/{user_id}', [carritoController::class, 'updateEstado']);
+
 Route::delete('/carrito/{id}', [carritoController::class, 'destroy']);
 
 //Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion

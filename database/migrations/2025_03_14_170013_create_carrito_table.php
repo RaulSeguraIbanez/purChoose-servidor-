@@ -18,9 +18,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
             $table->integer('cantidad')->default(1);
             $table->enum('estado', ['pagado', 'no pagado', 'recibido', 'enviado', 'cancelado'])->default('no pagado');
-            /*
-            $table->string('estado', ['pagado', 'no pagado','recibido', 'enviado', 'cancelado']) ->default('no pagado'); // 'pagado', 'no pagado', 'recibido', 'enviado', 'cancelado'
-            */
+            //enum pa k no se cuele ningun otro estado que no sea de los que se le asignan
         });
     }
 

@@ -19,7 +19,7 @@ class UserFactory extends Factory
             'role' => $this->faker->randomElement(['admin', 'usuario']),
             'ubicacion' => $this->faker->city(),
             'telefono' => $this->faker->phoneNumber(),
-            'fotoPerfil' => 'storage/app/public/images/userProfPic/user_profilepic_default.jpg',
+            'fotoPerfil' => '/storage/Images/userProfPic/user_profilepic_default.jpg',
         ];
     }
 }

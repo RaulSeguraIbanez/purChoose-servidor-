@@ -54,7 +54,7 @@ class productosController extends Controller
                 $imageName = time() . '_' . $image->getClientOriginalName();
 
                 // Guardar la imagen en la carpeta storage/app/public/images/productImages/
-                $path = $image->storeAs('public/Images/productImages', $imageName);
+                $path = $image->storeAs('public/app/Images/productImages', $imageName);
 
                 // Crear un registro en la tabla imagenes_pr
                 $imagenPr = new ImagenPr();
@@ -216,7 +216,7 @@ public function getImagesByProducto($productoId)
                     'publicado' => $producto->created_at->format('d/m/Y'),
                     'modificado' => $producto->updated_at->format('d/m/Y'),
                     'imagen' => $producto->imagenes->first()
-                    ? asset('storage/app/public/images/productImages/' . basename($producto->imagenes->first()->url))
+                    ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
                     : null,
 
                 ];
@@ -245,7 +245,7 @@ public function getImagesByProducto($productoId)
 
         foreach ($imagenes as $img) {
             // Elimina el archivo del disco si existe
-            $path = storage_path('app/public/images/productImages/' . basename($img->url));
+            $path = storage_path('images/productImages/' . basename($img->url));
             if (file_exists($path)) {
                 unlink($path);
             }
@@ -307,7 +307,7 @@ public function getImagesByProducto($productoId)
 
         $imagenes = $imagenes->map(function ($imagen) {
             // Asegúrate de que devuelva la URL completa y correcta
-            return url('storage/app/public/images/productImages/' . basename($imagen->url));
+            return url('storage/images/productImages/' . basename($imagen->url));
         });
 
         return response()->json($imagenes);

@@ -34,7 +34,7 @@ class AuthController extends Controller
             'password'     => Hash::make($request->password),
             'role'         => 'usuario',
             'fechaRegistro' => now(),
-            'fotoPerfil'   => '/storage/app/public/images/userProfPic/user_profilepic_default.jpg',
+            'fotoPerfil'   => '/storage/images/userProfPic/user_profilepic_default.jpg',
         ]);
 
         // Generar token de acceso personal
@@ -71,7 +71,7 @@ class AuthController extends Controller
             'password'     => Hash::make($request->password),
             'role'         => 'empresaurio',
             'fechaRegistro' => now(),
-            'fotoPerfil'   => '/storage/app/public/images/userProfPic/user_profilepic_default.jpg',
+            'fotoPerfil'   => '/storage/images/userProfPic/user_profilepic_default.jpg',
         ]);
 
         // Generar token de acceso personal

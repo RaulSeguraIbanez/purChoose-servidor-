@@ -333,4 +333,59 @@ public function getImagesByProducto($productoId)
         return response()->json($producto);
     }
 
+    public function updateEdit(Request $request, $id)
+    {
+        $producto = Producto::findOrFail($id);
+
+        $producto->update($request->all());
+
+        return response()->json(['message' => 'Producto actualizado correctamente', 'producto' => $producto]);
+    }
+
+
+    public function deleteImageByUrl($imageName)
+    {
+        if (!$imageName) {
+            return response()->json(['error' => 'No se proporcionó el nombre de la imagen'], 400);
+        }
+    
+        $image = ImagePr::where('url', 'like', "%$imageName")->first();
+    
+        if (!$image) {
+            return response()->json(['error' => 'Imagen no encontrada'], 404);
+        }
+    
+        $filePath = public_path("storage/images/productImages/$imageName");
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    
+        $image->delete();
+    
+        return response()->json(['success' => true]);
+    }
+    
+
+    public function updateCategorias(Request $request, $id)
+    {
+        $producto = Producto::find($id);
+    
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+    
+        $validator = Validator::make($request->all(), [
+            'categorias' => 'required|array',
+            'categorias.*' => 'exists:categorias,id'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+    
+        $producto->categorias()->sync($request->categorias);
+    
+        return response()->json(['message' => 'Categorías actualizadas correctamente'], 200);
+    }
+
 }

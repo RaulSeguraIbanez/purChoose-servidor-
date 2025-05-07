@@ -33,7 +33,7 @@ use App\Http\Controllers\adminProductVendor;
 //Rutas para API
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/registerBusiness', [AuthController::class, 'registerBusiness']);
+Route::post('/registersegaroamigo', [AuthController::class, 'registerVendedor']);
 Route::post('/login', [AuthController::class, 'login']);
 
 /*Route::middleware('auth:sanctum')->group(function () {

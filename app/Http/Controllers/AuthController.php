@@ -48,7 +48,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function registerBusiness(Request $request)
+    public function registerVendedor(Request $request)
     {
         // Validación de los datos del formulario
         $validator = Validator::make($request->all(), [
@@ -84,6 +84,7 @@ class AuthController extends Controller
             'token' => $token,
         ], 201);
     }
+
 
     /**
      * Inicio de sesión.

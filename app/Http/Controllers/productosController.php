@@ -129,7 +129,9 @@ public function getProductsWithCategoriesAndImages()
 
         foreach ($request->file('images') as $image) {
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $path = $image->storeAs('/storage/app/public/images/productImages', $imageName);
+            $path = $image->storeAs('public/images/productImages', $imageName);
+
+          /*  $path = $image->storeAs('/storage/app/public/images/productImages', $imageName); */
 
             $imagenPr = new ImagePr();
             $imagenPr->url = Storage::url($path);

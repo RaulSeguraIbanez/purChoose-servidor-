@@ -74,6 +74,7 @@ Route::post('/carrito', [carritoController::class, 'store']);
 Route::put('/carrito/item/{id}', [carritoController::class, 'updateCantidad']);
 /* http://127.0.0.1:8000/api/carrito/user/3 */
 Route::put('/carrito/user/{user_id}', [carritoController::class, 'updateEstado']);
+/* http://127.0.0.1:8000/api/carrito/4 */ //item el id del carrito
 Route::delete('/carrito/{id}', [carritoController::class, 'destroy']);
 
 //Rutas para modificar datos del usuario y mostrarlos. Solo permite modificar contraseña y ubicacion

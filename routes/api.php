@@ -12,6 +12,7 @@ use App\Http\Controllers\valoracionPotatoController;
 use App\Http\Controllers\carritoController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\MetodoPagoController;
+use App\Http\Controllers\adminProductVendor;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,3 +127,7 @@ Route::post('/valoraciones', [valoracionPotatoController::class, 'store']);
 // enseña el producto con su valoracion good
 Route::get('/productos/{id}', [productosController::class, 'showProductinhoPotato']);
 Route::delete('/productos/{id}', [productosController::class, 'eliminarProductuser']);
+
+//administracion de productos como vendedor
+Route::get('/productosVendor/user/{id}', [adminProductVendor::class, 'getProductsByUser']);
+Route::put('/productosVendor/{id}', [adminProductVendor::class, 'updateProduct']);

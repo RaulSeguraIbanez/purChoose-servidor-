@@ -104,6 +104,20 @@ class carritoController extends Controller
 
 
 
+
+    public function destroy($id)
+    {
+        $carrito = Carrito::find($id);
+
+        if (!$carrito) {
+            return response()->json(['message' => 'Producto no encontrado en el carrito'], 404);
+        }
+
+        $carrito->delete();
+
+        return response()->json(['message' => 'Producto eliminado del carrito'], 200);
+    }
+
     /* Potato section update*/
 
     public function updateCantidad(Request $request, $id)

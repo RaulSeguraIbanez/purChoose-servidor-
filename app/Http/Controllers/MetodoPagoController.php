@@ -41,7 +41,36 @@ class MetodoPagoController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+        // Verificar duplicados por tipo de pago
+$userId = $request->input('user_id');
+$tipo = $request->input('tipo');
 
+if ($tipo === 'tarjeta') {
+    $nombreTarjeta = $request->input('nombre');
+    $duplicada = MetodoPago::where('user_id', $userId)
+        ->where('tipo', 'tarjeta')
+        ->where('nombre', $nombreTarjeta)
+        ->first();
+
+    if ($duplicada) {
+        return response()->json([
+            'success' => false,
+            'message' => "Ya tienes una tarjeta de '{$nombreTarjeta}'.",
+        ], 409);
+    }
+
+} elseif (in_array($tipo, ['paypal', 'apple_pay', 'google_pay'])) {
+    $servicioExistente = MetodoPago::where('user_id', $userId)
+        ->where('tipo', $tipo)
+        ->exists();
+
+    if ($servicioExistente) {
+        return response()->json([
+            'success' => false,
+            'message' => "Ya tienes un servicio de pago de '" . ucfirst(str_replace('_', ' ', $tipo)) . "'.",
+        ], 409);
+    }
+}
         // Crear una nueva instancia del modelo MetodoPago
         $metodoPago = new MetodoPago();
         $metodoPago->user_id = $request->input('user_id');
@@ -57,6 +86,7 @@ class MetodoPagoController extends Controller
             $metodoPago->email = $request->input('email');
             $metodoPago->password = Crypt::encryptString($request->input('password'));
         }
+        
 
         // Guardar el método de pago en la base de datos
         $metodoPago->save();

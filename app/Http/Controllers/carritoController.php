@@ -144,54 +144,77 @@ class carritoController extends Controller
         }
     }
 
+    
     public function updateEstado(Request $request, $user_id)
     {
         try {
-            // Validar solo si estado viene
+            // Validar estado
             $request->validate([
                 'estado' => 'required|in:pagado,no pagado,recibido,enviado,cancelado'
             ]);
-
-            // Cargamos también la relación 'producto' para poder usar su precio
+    
+            // Cargamos todos los productos del carrito del usuario
             $carritos = Carrito::with('producto')->where('user_id', $user_id)->get();
-
+    
             if ($carritos->isEmpty()) {
-                return response()->json([
-                    'message' => 'No hay productos en el carrito para este usuario',
-                ], 404);
+                return response()->json(['message' => 'No hay productos en el carrito'], 404);
             }
-
+    
+            // Creamos un array temporal para agrupar productos en esta compra
+            $productosEnEstaCompra = [];
+    
             foreach ($carritos as $carrito) {
                 \Log::info('Actualizando estado:', ['id' => $carrito->id, 'estado' => $request->estado]);
-
+    
                 if ($request->estado === 'pagado') {
-                    Historial::create([
-                        'user_id' => $carrito->user_id,
-                        'producto_id' => $carrito->producto_id,
-                        'cantidad' => $carrito->cantidad,
-                        'precio_total' => $carrito->producto->precio * $carrito->cantidad,
-                        'estado' => 'pagado',
-                    ]);
-
+                    // 👇 Verificamos si ya está en este grupo local
+                    $productoId = $carrito->producto_id;
+    
+                    if (isset($productosEnEstaCompra[$productoId])) {
+                        // Ya existe en esta operación → sumamos cantidad
+                        $productosEnEstaCompra[$productoId]['cantidad'] += $carrito->cantidad;
+                        $productosEnEstaCompra[$productoId]['precio_total'] += $carrito->cantidad * $carrito->producto->precio;
+                    } else {
+                        // Nuevo producto en esta operación
+                        $productosEnEstaCompra[$productoId] = [
+                            'producto_id' => $productoId,
+                            'cantidad' => $carrito->cantidad,
+                            'precio_total' => $carrito->cantidad * $carrito->producto->precio,
+                        ];
+                    }
+    
+                    // Elimina del carrito
                     $carrito->delete();
                 } else {
+                    // Otros estados, simplemente actualiza
                     $carrito->estado = $request->estado;
                     $carrito->save();
                 }
             }
-
+    
+            // Ahora guardamos los datos en el historial
+            foreach ($productosEnEstaCompra as $item) {
+                Historial::create([
+                    'user_id' => $user_id,
+                    'producto_id' => $item['producto_id'],
+                    'cantidad' => $item['cantidad'],
+                    'precio_total' => $item['precio_total'],
+                    'estado' => 'pagado',
+                ]);
+            }
+    
             return response()->json([
                 'message' => 'Estado del carrito actualizado exitosamente'
             ], 200);
+    
         } catch (\Exception $e) {
             \Log::error('Error al actualizar el carrito:', ['user_id' => $user_id, 'error' => $e->getMessage()]);
             return response()->json([
-                'message' => 'Ocurrió un error inesperado',
+                'message' => 'Ocurrió un error inesperado.',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-
 
 
 

@@ -45,6 +45,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/productos', [productosController::class, 'indexProductos']);
 Route::post('/productos', [productosController::class, 'storeProducto']);
+Route::post('/productos-empresauriales', [productosController::class, 'storeProductoEmpresaurio']);
 
 Route::get('/productos/{id}/detalles', [productosController::class, 'showProductoDetallado']);
 Route::post('/productos/{id}/upload-images', [productosController::class, 'storeImages']);
@@ -72,7 +73,7 @@ Route::get('/carrito/{user_id}', [CarritoController::class, 'index']);
 Route::post('/carrito', [carritoController::class, 'store']);
 /* http://127.0.0.1:8000/api/carrito/item/1 */   //item el id del carrito
 Route::put('/carrito/item/{id}', [carritoController::class, 'updateCantidad']);
-/* http://127.0.0.1:8000/api/carrito/user/3 */
+/* http://127.0.0.1:8000/api/carrito/1 */ // id del user
 Route::put('/carrito/{user_id}', [carritoController::class, 'updateEstado']);
 /* http://127.0.0.1:8000/api/carrito/4 */ //item el id del carrito
 Route::delete('/carrito/{id}', [carritoController::class, 'destroy']);

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('ubicacion')->nullable();
             $table->boolean('oferta')->default(false);
             $table->boolean('individual')->default(true);
-            $table->string('quantity')->default(1);
+            $table->integer('quantity')->default(1);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

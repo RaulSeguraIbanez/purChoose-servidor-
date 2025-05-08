@@ -21,6 +21,7 @@ class Producto extends Model
         'estado',
         'ubicacion',
         'oferta',
+        'quantity',
         'individual',
         'user_id',
     ];

@@ -69,28 +69,80 @@ class productosController extends Controller
             'producto' => $producto,
         ], 201);
     }
+
+    public function storeProductoEmpresaurio(Request $request)
+    {
+        // Validar los datos del producto y las imágenes
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'precio' => 'required|numeric|min:0',
+            'estado' => 'required|string|in:nuevo,usado',
+            'oferta' => 'boolean',
+            'individual' => 'boolean',
+            'quantity' => 'integer|min:2',
+            'ubicacion' => 'nullable|string',
+            'user_id' => 'required|integer|exists:users,id',
+            'categorias' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Sobrescribir manualmente el campo 'individual' a false
+        $datos = $request->except(['categorias', 'images']);
+        $datos['individual'] = false;
+
+        // Crear el producto con el valor de 'individual' ya forzado
+        $producto = Producto::create($datos);
+
+        // Asociar el producto con las categorías
+        if ($request->has('categorias')) {
+            $producto->categorias()->sync($request->categorias);
+        }
+
+        // Subir imágenes
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $path = $image->storeAs('public/app/Images/productImages', $imageName);
+
+                $imagenPr = new ImagenPr();
+                $imagenPr->url = Storage::url($path);
+                $imagenPr->producto_id = $producto->id;
+                $imagenPr->save();
+            }
+        }
+
+        return response()->json([
+            'message' => 'Producto creado correctamente',
+            'producto' => $producto,
+        ], 201);
+    }
+
     // Obtener todos los productos con sus categorías e imágenes
-public function getProductsWithCategoriesAndImages()
-{
-    // Cargar productos con sus relaciones
-    $productos = Producto::with(['categorias', 'imagenes'])->get();
+    public function getProductsWithCategoriesAndImages()
+    {
+        // Cargar productos con sus relaciones
+        $productos = Producto::with(['categorias', 'imagenes'])->get();
 
-    // Formatear las imágenes para incluir URLs absolutas
-    $productos = $productos->map(function ($producto) {
-        $producto->imagenes = $producto->imagenes->map(function ($imagen) {
-            return [
-                'id' => $imagen->id,
-                'url' => asset($imagen->url), // Genera una URL absoluta
-            ];
+        // Formatear las imágenes para incluir URLs absolutas
+        $productos = $productos->map(function ($producto) {
+            $producto->imagenes = $producto->imagenes->map(function ($imagen) {
+                return [
+                    'id' => $imagen->id,
+                    'url' => asset($imagen->url), // Genera una URL absoluta
+                ];
+            });
+            return $producto;
         });
-        return $producto;
-    });
 
-    return response()->json([
-        'message' => 'Productos obtenidos correctamente',
-        'productos' => $productos,
-    ], 200);
-}
+        return response()->json([
+            'message' => 'Productos obtenidos correctamente',
+            'productos' => $productos,
+        ], 200);
+    }
 
     public function getProductsWithCategoriesAndImages_Caroussel()
     {
@@ -160,32 +212,32 @@ public function getProductsWithCategoriesAndImages()
 
         return response()->json($productos);
     }
-// Obtener todas las imágenes asociadas a un producto específico
-public function getImagesByProducto($productoId)
-{
-    // Buscar el producto por su ID
-    $producto = Producto::find($productoId);
+    // Obtener todas las imágenes asociadas a un producto específico
+    public function getImagesByProducto($productoId)
+    {
+        // Buscar el producto por su ID
+        $producto = Producto::find($productoId);
 
-    if (!$producto) {
-        return response()->json(['error' => 'Producto no encontrado'], 404);
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        // Obtener las imágenes asociadas al producto
+        $imagenes = $producto->imagenes; // Usando la relación definida en el modelo Producto
+
+        // Formatear las imágenes para devolver solo las URLs
+        $urls = $imagenes->map(function ($imagen) {
+            return [
+                'id' => $imagen->id,
+                'url' => $imagen->url,
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Imágenes obtenidas correctamente',
+            'imagenes' => $urls,
+        ], 200);
     }
-
-    // Obtener las imágenes asociadas al producto
-    $imagenes = $producto->imagenes; // Usando la relación definida en el modelo Producto
-
-    // Formatear las imágenes para devolver solo las URLs
-    $urls = $imagenes->map(function ($imagen) {
-        return [
-            'id' => $imagen->id,
-            'url' => $imagen->url,
-        ];
-    });
-
-    return response()->json([
-        'message' => 'Imágenes obtenidas correctamente',
-        'imagenes' => $urls,
-    ], 200);
-}
     // Mostrar detalles de un producto específico
     public function showProductoDetallado($id)
     {

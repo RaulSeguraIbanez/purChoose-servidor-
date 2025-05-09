@@ -9,7 +9,7 @@ class opinionPotato extends Model
 {
     use HasFactory;
 
-    protected $table = 'opinion_potato';
+    protected $table = 'valoraciones';
 
     protected $fillable = [
         'product_id',

@@ -31,9 +31,9 @@ class Producto extends Model
      *
      * @var array
      */
-    protected $hidden = [
+    /**protected $hidden = [
         'quantity', // Asegúrate de que este campo exista en la tabla `productos`
-    ];
+    ]; */
 
     /**
      * Los atributos que deben ser convertidos a tipos nativos.
@@ -95,11 +95,11 @@ class Producto extends Model
     {
         return $this->hasMany(opinionPotato::class, 'product_id');
     }
-    
+
     public function valorinhaGood()
     {
         return $this->hasMany(valoracionPotato::class, 'producto_id');
     }
-    
+
 
 }

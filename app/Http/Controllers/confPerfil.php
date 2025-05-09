@@ -91,23 +91,22 @@ class confPerfil extends Controller
             'password' => $request->password ? Hash::make($request->password) : $usuario->password,
         ]);
 
-        // Manejar la carga de la imagen
-        if ($request->fotoPerfil) {
-            // Eliminar la imagen anterior si existe
-            if ($usuario->fotoPerfil) {
-                Storage::delete(str_replace('storage', 'public', $usuario->fotoPerfil));
+            // Manejar la carga de la imagen
+            if ($request->fotoPerfil) {
+                // Decodificar la imagen Base64
+                $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->fotoPerfil));
+
+                // Nombre de archivo fijo por usuario
+                $imageName = $usuario->id . '_userProfPic.png';
+
+                // Guardar o sobrescribir la imagen en el sistema de archivos
+                Storage::disk('public')->put('Images/userProfPic/' . $imageName, $imageData);
+
+                // Actualizar la URL en la base de datos
+                $usuario->update(['fotoPerfil' => '/storage/Images/userProfPic/' . $imageName]);
+
+                return response()->json(['message' => 'Imagen actualizada correctamente.'], 200);
             }
-
-            // Decodificar la imagen Base64
-            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->fotoPerfil));
-
-            // Guardar la imagen en el sistema de archivos
-            $imageName = 'user_' . $id . '_' . time() . '.png'; // Nombre único para la imagen
-            Storage::disk('public')->put('Images/userProfPic/' . $imageName, $imageData);
-
-            // Guardar la URL en la base de datos
-            $usuario->update(['fotoPerfil' => '/storage/Images/userProfPic/' . $imageName]);
-        }
 
         return response()->json([
             'success' => true,

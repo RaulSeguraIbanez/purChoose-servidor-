@@ -64,7 +64,7 @@ class Producto extends Model
      */
     public function opiniones()
     {
-        return $this->hasMany(OpinionPotato::class, 'product_id');
+        return $this->hasMany(OpinionPotato::class, 'producto_id');
     }
 
     /**
@@ -93,7 +93,7 @@ class Producto extends Model
     //VAL. N2
     public function opiPotatoe()
     {
-        return $this->hasMany(opinionPotato::class, 'product_id');
+        return $this->hasMany(opinionPotato::class, 'producto_id');
     }
     
     public function valorinhaGood()

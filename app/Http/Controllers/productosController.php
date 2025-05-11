@@ -9,6 +9,9 @@ use App\Models\ImagePr; //"ImagePr"
 use App\Models\User; // Import the User model
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class productosController extends Controller
 {
@@ -251,6 +254,7 @@ class productosController extends Controller
     }
 
     // productos del usuario ardeiii
+    // por puto vago andrei pilla el producto del usuario y las visitas en vez de hacer uno nuevo
     public function porUsuario($id)
     {
         $user = User::find($id);
@@ -272,6 +276,7 @@ class productosController extends Controller
                     'imagen' => $producto->imagenes->first()
                     ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
                     : null,
+                    'views' => $producto->views,
 
                 ];
             });
@@ -441,5 +446,22 @@ class productosController extends Controller
     
         return response()->json(['message' => 'Categorías actualizadas correctamente'], 200);
     }
+
+    //visitas
+    public function incrementViews($id)
+    {
+        Log::info("Vista registrada para producto ID: $id");
+
+        $producto = Producto::find($id);
+        if ($producto) {
+            $producto->views += 1;
+            $producto->save();
+            return response()->json(['message' => 'Visita registrada'], 200);
+        }
+
+        return response()->json(['message' => 'Producto no encontrado'], 404);
+    }
+
+
 
 }

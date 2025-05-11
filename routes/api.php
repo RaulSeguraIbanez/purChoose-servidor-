@@ -133,3 +133,6 @@ Route::delete('/productos/{id}', [productosController::class, 'eliminarProductus
 //administracion de productos como vendedor
 Route::get('/productosVendor/user/{id}', [adminProductVendor::class, 'getProductsByUser']);
 Route::put('/productosVendor/{id}', [adminProductVendor::class, 'updateProduct']);
+
+//visitas
+Route::post('/productos/{id}/incrementViews', [productosController::class, 'incrementViews']);

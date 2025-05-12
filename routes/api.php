@@ -134,5 +134,31 @@ Route::delete('/productos/{id}', [productosController::class, 'eliminarProductus
 Route::get('/productosVendor/user/{id}', [adminProductVendor::class, 'getProductsByUser']);
 Route::put('/productosVendor/{id}', [adminProductVendor::class, 'updateProduct']);
 
-//visitas
 Route::post('/productos/{id}/incrementViews', [productosController::class, 'incrementViews']);
+
+//-----------------------CHATS-----------------------
+use App\Http\Controllers\ChatController;
+
+// 1. Crear chat manualmente
+Route::post('/chat', [ChatController::class, 'createChat']);
+
+// 2. Obtener o crear chat automático (por producto y otro usuario)
+Route::post('/producto/{productoId}/chat/{otroUsuarioId}', [ChatController::class, 'getOrCreateChat']);
+
+// 3. Listar todos los chats del usuario autenticado
+Route::get('/chats/{id_usuario}', [ChatController::class, 'getAllChatsByUser']);
+
+// 4. Eliminar un chat completo
+Route::delete('/chat/{id}', [ChatController::class, 'deleteChat']);
+
+// 5. Enviar mensaje a un chat
+Route::post('/chat/{chatId}/mensaje', [ChatController::class, 'sendMessage']);
+
+// 6. Editar un mensaje
+Route::put('/chat/{chatId}/mensaje/{mensajeId}', [ChatController::class, 'updateMensaje']);
+
+// 7. Eliminar un mensaje
+Route::delete('/chat/{chatId}/mensaje/{mensajeId}', [ChatController::class, 'deleteMensaje']);
+    
+// 8. Obtener todos los mensajes de un chat
+Route::get('/chat/{chatId}/mensajes', [ChatController::class, 'getAllMensajesByChat']);

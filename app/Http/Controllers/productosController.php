@@ -265,6 +265,7 @@ class productosController extends Controller
 
         $productos = Producto::with('imagenes')
             ->where('user_id', $id)
+            ->where('activo', true)
             ->get()
             ->map(function ($producto) {
                 return [
@@ -278,6 +279,7 @@ class productosController extends Controller
                     : null,
                     'views' => $producto->views,
                     'ventas' => $producto->ventas,
+                    'activo' => $producto->activo,
 
                 ];
             });

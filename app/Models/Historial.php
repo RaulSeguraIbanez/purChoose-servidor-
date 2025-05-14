@@ -21,10 +21,21 @@ class Historial extends Model
     protected static function booted()
     {
         static::created(function ($historial) {
-            // Solo sumar ventas si el historial es de un producto pagado
+            // Solo restar si el estado es pagado
             if ($historial->estado === 'pagado') {
-                Producto::where('id', $historial->producto_id)
-                    ->increment('ventas', $historial->cantidad);
+                $producto = Producto::find($historial->producto_id);
+
+                if ($producto) {
+                    // Restar la cantidad vendida
+                    $producto->quantity -= $historial->cantidad;
+
+                    // Si el stock se agota, marcarlo como inactivo
+                    if ($producto->quantity <= 0) {
+                        $producto->activo = false;
+                    }
+
+                    $producto->save();
+                }
             }
         });
     }

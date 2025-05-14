@@ -25,6 +25,7 @@ class Producto extends Model
         'individual',
         'views',
         'ventas',
+        'activo',
         'user_id',
     ];
 

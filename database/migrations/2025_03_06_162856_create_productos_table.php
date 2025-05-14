@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->unsignedInteger('views')->default(0);
             $table->unsignedInteger('ventas')->default(0);
+            $table->boolean('activo')->default(true);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

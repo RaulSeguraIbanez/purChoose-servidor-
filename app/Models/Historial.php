@@ -23,6 +23,8 @@ class Historial extends Model
         static::created(function ($historial) {
             // Solo restar si el estado es pagado
             if ($historial->estado === 'pagado') {
+                Producto::where('id', $historial->producto_id)
+                        ->increment('ventas', $historial->cantidad);
                 $producto = Producto::find($historial->producto_id);
 
                 if ($producto) {

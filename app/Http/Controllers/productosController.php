@@ -255,7 +255,7 @@ class productosController extends Controller
 
     // productos del usuario ardeiii
     // por puto vago andrei pilla el producto del usuario y las visitas en vez de hacer uno nuevo
-    public function porUsuario($id)
+   public function porUsuario($id, Request $request)
     {
         $user = User::find($id);
 
@@ -263,26 +263,31 @@ class productosController extends Controller
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        $productos = Producto::with('imagenes')
-            ->where('user_id', $id)
-            ->where('activo', true)
-            ->get()
-            ->map(function ($producto) {
-                return [
-                    'id' => $producto->id,
-                    'titulo' => $producto->nombre,
-                    'precio' => $producto->precio,
-                    'publicado' => $producto->created_at->format('d/m/Y'),
-                    'modificado' => $producto->updated_at->format('d/m/Y'),
-                    'imagen' => $producto->imagenes->first()
+        $query = Producto::with('imagenes')
+            ->where('user_id', $id);
+
+        // Filtrar según query string
+        if ($request->query('inactivos') === 'true') {
+            $query->where('activo', false);
+        } else {
+            $query->where('activo', true);
+        }
+
+        $productos = $query->get()->map(function ($producto) {
+            return [
+                'id' => $producto->id,
+                'titulo' => $producto->nombre,
+                'precio' => $producto->precio,
+                'publicado' => $producto->created_at->format('d/m/Y'),
+                'modificado' => $producto->updated_at->format('d/m/Y'),
+                'imagen' => $producto->imagenes->first()
                     ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
                     : null,
-                    'views' => $producto->views,
-                    'ventas' => $producto->ventas,
-                    'activo' => $producto->activo,
-
-                ];
-            });
+                'views' => $producto->views,
+                'ventas' => $producto->ventas,
+                'activo' => $producto->activo,
+            ];
+        });
 
         return response()->json([
             'user' => [
@@ -293,6 +298,7 @@ class productosController extends Controller
             'productos' => $productos
         ]);
     }
+
 
     public function eliminarProductuser($id)
     {

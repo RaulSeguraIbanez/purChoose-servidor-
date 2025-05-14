@@ -18,6 +18,17 @@ class Historial extends Model
         'estado',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($historial) {
+            // Solo sumar ventas si el historial es de un producto pagado
+            if ($historial->estado === 'pagado') {
+                Producto::where('id', $historial->producto_id)
+                    ->increment('ventas', $historial->cantidad);
+            }
+        });
+    }
+
     // Relación con el usuario
     public function user()
     {

@@ -277,6 +277,7 @@ class productosController extends Controller
                     ? asset('storage/images/productImages/' . basename($producto->imagenes->first()->url))
                     : null,
                     'views' => $producto->views,
+                    'ventas' => $producto->ventas,
 
                 ];
             });

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('individual')->default(true);
             $table->integer('quantity')->default(1);
             $table->unsignedInteger('views')->default(0);
+            $table->unsignedInteger('ventas')->default(0);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

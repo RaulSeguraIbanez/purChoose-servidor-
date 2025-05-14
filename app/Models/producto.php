@@ -23,6 +23,8 @@ class Producto extends Model
         'oferta',
         'quantity',
         'individual',
+        'views',
+        'ventas',
         'user_id',
     ];
 

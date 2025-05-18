@@ -85,12 +85,14 @@ Route::put('/usuario/{id}', [perfilPotatoController::class, 'update']);*/
 Route::get('/usuario/{id}', [confPerfil::class, 'show']);
 Route::put('/usuario/{id}', [confPerfil::class, 'update']);
 
+// la ruta de iamgenes del puto carrusel de los cojones del subnormal k kiere vender su mierda
+Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProductId']);
 
 // Producto del user
 // los productos k ha creado el usuario
 Route::get('/productos/por-usuario/{id}', [ProductosController::class, 'porUsuario']);
 // obtenemos la imagen del producto por id para poder editar el producto
-Route::get('/productos/{id}/imagenes', [productosController::class, 'getImagesByProductId']);
+Route::get('/productos/{id}/imagenes/editar', [productosController::class, 'getImagesByProductIdForEdit']); // cucu
 // Obtener categorías por ID de producto
 Route::get('/categorias/producto/{id}', [categoriasController::class, 'getByProductId']);
 // edita el producto menos categorias y imagenes
@@ -100,7 +102,7 @@ Route::delete('/imagenes/{imageName}', [productosController::class, 'deleteImage
 // actualizar la pta categoria del producto
 Route::put('/productos/{id}/categorias', [productosController::class, 'updateCategorias']);
 // meter una foto nueva en editar producto
-Route::post('/productos/{id}/imagenes', [productosController::class, 'storeImages']);
+Route::post('/productos/{id}/imagenes/nueva', [productosController::class, 'storeImages']);
 // elimina el producto en /products
 Route::delete('/productos/{id}', [productosController::class, 'eliminarProductuser']);
 

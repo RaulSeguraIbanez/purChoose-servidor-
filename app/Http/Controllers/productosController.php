@@ -381,7 +381,27 @@ class productosController extends Controller
             'imagenes' => $producto->imagenes
         ]);
     }
+  
 
+    // Las foticos del producto a editar
+    public function getImagesByProductIdForEdit($id)
+    {
+        $imagenes = ImagePr::where('producto_id', $id)->get();
+        $producto = Producto::with('imagenes')->find($id);
+
+        $imagenes = $imagenes->map(function ($imagen) {
+            // Asegúrate de que devuelva la URL completa y correcta
+            return url('storage/images/productImages/' . basename($imagen->url));
+        });
+        if (!$producto) {
+            return response()->json(['message' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json($imagenes);
+        return response()->json([
+            'imagenes' => $producto->imagenes
+        ]);
+    }
 
 
 

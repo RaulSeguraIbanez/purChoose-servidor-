@@ -105,6 +105,9 @@ Route::put('/productos/{id}/categorias', [productosController::class, 'updateCat
 Route::post('/productos/{id}/imagenes/nueva', [productosController::class, 'storeImages']);
 // elimina el producto en /products
 Route::delete('/productos/{id}', [productosController::class, 'eliminarProductuser']);
+//elimina todas las imagenes de un producto
+Route::delete('/imagenes/por-producto/{id}', [productosController::class, 'deleteAllByProductId']);
+
 
 // Listar el historial de un usuario específico
 Route::get('/historial/{user_id}', [HistorialController::class, 'index']);

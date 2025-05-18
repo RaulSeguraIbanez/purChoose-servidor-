@@ -454,6 +454,21 @@ class productosController extends Controller
     
         return response()->json(['success' => true]);
     }
+    // Eliminar todas las imágenes de un producto específico
+    public function deleteAllByProductId($id)
+    {
+        $imagenes = ImagePr::where('producto_id', $id)->get();
+
+        foreach ($imagenes as $imagen) {
+            $path = str_replace('/storage/', 'public/', $imagen->url);
+            Storage::delete($path);
+
+            $imagen->delete();
+        }
+
+        return response()->json(['message' => 'Todas las imágenes fueron eliminadas.']);
+    }
+
     
 
     public function updateCategorias(Request $request, $id)

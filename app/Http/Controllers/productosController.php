@@ -368,7 +368,7 @@ class productosController extends Controller
 
 
 
-    // Obtener imágenes por ID de producto
+    // Obtener imágenes por ID de producto "para el carrousel"
     public function getImagesByProductId($id)
     {
         $producto = Producto::with('imagenes')->find($id);

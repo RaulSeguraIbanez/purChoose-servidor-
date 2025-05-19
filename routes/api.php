@@ -56,6 +56,8 @@ Route::get('/productos/{id}/with-images', [productosController::class, 'getProdu
 Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
 Route::get('/productos/with-categories-and-images-caroussel', [productosController::class, 'getProductsWithCategoriesAndImages_Caroussel']);
 
+Route::get('/categorias/filter', [productosController::class, 'getProductsWithCategoriesAndImagesByCategoria']);
+
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);
@@ -164,6 +166,6 @@ Route::put('/chat/{chatId}/mensaje/{mensajeId}', [ChatController::class, 'update
 
 // 7. Eliminar un mensaje
 Route::delete('/chat/{chatId}/mensaje/{mensajeId}', [ChatController::class, 'deleteMensaje']);
-    
+
 // 8. Obtener todos los mensajes de un chat
 Route::get('/chat/{chatId}/mensajes', [ChatController::class, 'getAllMensajesByChat']);

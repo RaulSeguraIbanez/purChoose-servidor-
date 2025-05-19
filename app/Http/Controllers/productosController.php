@@ -172,6 +172,33 @@ class productosController extends Controller
         ], 200);
     }
 
+    public function getProductsWithCategoriesAndImagesByCategory(array $categoriash)
+    {
+        // Obtener productos que pertenezcan a alguna de las categorías dadas
+        $productos = Producto::with(['categorias', 'imagenes'])
+            ->whereHas('categorias', function ($query) use ($categoriash) {
+                $query->whereIn('categorias.id', $categoriash);
+            })
+            ->get();
+
+        // Formatear las imágenes para incluir URLs absolutas
+        $productos = $productos->map(function ($producto) {
+            $producto->imagenes = $producto->imagenes->map(function ($imagen) {
+                return [
+                    'id' => $imagen->id,
+                    'url' => asset($imagen->url),
+                ];
+            });
+            return $producto;
+        });
+
+        return response()->json([
+            'message' => 'Productos obtenidos correctamente',
+            'productos' => $productos,
+        ], 200);
+    }
+
+
     public function storeImages(Request $request, $productoId)
     {
         $validator = Validator::make($request->all(), [
@@ -381,7 +408,7 @@ class productosController extends Controller
             'imagenes' => $producto->imagenes
         ]);
     }
-  
+
 
     // Las foticos del producto a editar
     public function getImagesByProductIdForEdit($id)
@@ -438,20 +465,20 @@ class productosController extends Controller
         if (!$imageName) {
             return response()->json(['error' => 'No se proporcionó el nombre de la imagen'], 400);
         }
-    
+
         $image = ImagePr::where('url', 'like', "%$imageName")->first();
-    
+
         if (!$image) {
             return response()->json(['error' => 'Imagen no encontrada'], 404);
         }
-    
+
         $filePath = public_path("storage/images/productImages/$imageName");
         if (file_exists($filePath)) {
             unlink($filePath);
         }
-    
+
         $image->delete();
-    
+
         return response()->json(['success' => true]);
     }
     // Eliminar todas las imágenes de un producto específico
@@ -469,27 +496,27 @@ class productosController extends Controller
         return response()->json(['message' => 'Todas las imágenes fueron eliminadas.']);
     }
 
-    
+
 
     public function updateCategorias(Request $request, $id)
     {
         $producto = Producto::find($id);
-    
+
         if (!$producto) {
             return response()->json(['error' => 'Producto no encontrado'], 404);
         }
-    
+
         $validator = Validator::make($request->all(), [
             'categorias' => 'required|array',
             'categorias.*' => 'exists:categorias,id'
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 400);
         }
-    
+
         $producto->categorias()->sync($request->categorias);
-    
+
         return response()->json(['message' => 'Categorías actualizadas correctamente'], 200);
     }
 

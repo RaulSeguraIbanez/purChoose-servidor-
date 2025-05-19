@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('fechaRegistro')->useCurrent();
             $table->string('ubicacion')->nullable();
             $table->string('telefono', 20)->nullable();
-            $table->string('fotoPerfil')->default('/storage/images/userProfPic/user_profilepic_default.jpg');
+            $table->string('fotoPerfil')->default('/storage/images/user_profilepic_default.jpg');
             $table->rememberToken();
             $table->timestamps();
         });

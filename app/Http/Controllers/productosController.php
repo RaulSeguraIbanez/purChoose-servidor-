@@ -172,9 +172,11 @@ class productosController extends Controller
         ], 200);
     }
 
-    public function getProductsWithCategoriesAndImagesByCategory(array $categoriash)
+    public function getProductsWithCategoriesAndImagesByCategory(Request $request)
     {
-        // Obtener productos que pertenezcan a alguna de las categorías dadas
+        $categoriash = $request->input('categorias'); // Extraer array de categorías
+
+        // Obtener productos que pertenecen a alguna de las categorías
         $productos = Producto::with(['categorias', 'imagenes'])
             ->whereHas('categorias', function ($query) use ($categoriash) {
                 $query->whereIn('categorias.id', $categoriash);
@@ -193,7 +195,7 @@ class productosController extends Controller
         });
 
         return response()->json([
-            'message' => 'Productos obtenidos correctamente',
+            'message' => 'Productos filtrados por categoría obtenidos correctamente',
             'productos' => $productos,
         ], 200);
     }

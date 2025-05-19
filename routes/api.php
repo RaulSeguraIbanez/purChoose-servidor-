@@ -56,8 +56,7 @@ Route::get('/productos/{id}/with-images', [productosController::class, 'getProdu
 Route::get('/productos/with-categories-and-images', [productosController::class, 'getProductsWithCategoriesAndImages']);
 Route::get('/productos/with-categories-and-images-caroussel', [productosController::class, 'getProductsWithCategoriesAndImages_Caroussel']);
 
-Route::get('/categorias/filter', [productosController::class, 'getProductsWithCategoriesAndImagesByCategoria']);
-
+Route::post('/categorias/filter', [ProductosController::class, 'getProductsWithCategoriesAndImagesByCategory']);
 
 Route::get('/categorias', [categoriasController::class, 'indexCategorias']);
 Route::post('/categorias', [categoriasController::class, 'storeCategoria']);

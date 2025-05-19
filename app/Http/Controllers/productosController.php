@@ -172,33 +172,41 @@ class productosController extends Controller
         ], 200);
     }
 
-    public function getProductsWithCategoriesAndImagesByCategory(Request $request)
-    {
-        $categoriash = $request->input('categorias'); // Extraer array de categorías
+public function getProductsWithCategoriesAndImagesByCategory(Request $request)
+{
+    $categoriaIds = $request->input('categorias');
 
-        // Obtener productos que pertenecen a alguna de las categorías
-        $productos = Producto::with(['categorias', 'imagenes'])
-            ->whereHas('categorias', function ($query) use ($categoriash) {
-                $query->whereIn('categorias.id', $categoriash);
-            })
-            ->get();
+    // Obtener todos los productos filtrados por categoría (intersección)
+    $query = Producto::with(['categorias', 'imagenes']);
 
-        // Formatear las imágenes para incluir URLs absolutas
-        $productos = $productos->map(function ($producto) {
-            $producto->imagenes = $producto->imagenes->map(function ($imagen) {
-                return [
-                    'id' => $imagen->id,
-                    'url' => asset($imagen->url),
-                ];
+    // Si hay categorías, filtrar productos que tengan TODAS esas categorías
+    if (!empty($categoriaIds) && is_array($categoriaIds)) {
+        foreach ($categoriaIds as $categoriaId) {
+            $query->whereHas('categorias', function ($q) use ($categoriaId) {
+                $q->where('categorias.id', $categoriaId);
             });
-            return $producto;
+        }
+    }
+
+    $productos = $query->get();
+
+    // Formatear imágenes con URL absoluta
+    $productos = $productos->map(function ($producto) {
+        $producto->imagenes = $producto->imagenes->map(function ($imagen) {
+            return [
+                'id' => $imagen->id,
+                'url' => asset($imagen->url),
+            ];
         });
 
-        return response()->json([
-            'message' => 'Productos filtrados por categoría obtenidos correctamente',
-            'productos' => $productos,
-        ], 200);
-    }
+        return $producto;
+    });
+
+    return response()->json([
+        'message' => 'Productos obtenidos correctamente',
+        'productos' => $productos
+    ], 200);
+}
 
 
     public function storeImages(Request $request, $productoId)

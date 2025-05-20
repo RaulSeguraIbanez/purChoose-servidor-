@@ -13,7 +13,7 @@ use App\Http\Controllers\carritoController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\adminProductVendor;
-
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -168,3 +168,30 @@ Route::delete('/chat/{chatId}/mensaje/{mensajeId}', [ChatController::class, 'del
 
 // 8. Obtener todos los mensajes de un chat
 Route::get('/chat/{chatId}/mensajes', [ChatController::class, 'getAllMensajesByChat']);
+
+
+/*-------------------------ADMIN-----------------------------------*/
+
+// Rutas del admin para API
+Route::prefix('admin')->group(function () {
+    // Usuarios
+    Route::get('/usuarios', [AdminController::class, 'indexUsuarios']);
+    Route::get('/usuarios/{id}', [AdminController::class, 'showUsuario']);
+    Route::post('/usuarios', [AdminController::class, 'storeUsuario']);
+    Route::put('/usuarios/{id}', [AdminController::class, 'updateUsuario']);
+    Route::delete('/usuarios/{id}', [AdminController::class, 'deleteUsuario']);
+
+    // Categorías
+    Route::get('/categorias', [AdminController::class, 'indexCategorias']);
+    Route::get('/categorias/{id}', [AdminController::class, 'showCategoria']);
+    Route::post('/categorias', [AdminController::class, 'storeCategoria']);
+    Route::put('/categorias/{id}', [AdminController::class, 'updateCategoria']);
+    Route::delete('/categorias/{id}', [AdminController::class, 'deleteCategoria']);
+
+    // Productos
+    Route::get('/productos', [AdminController::class, 'indexProductos']);
+    Route::get('/productos/{id}', [AdminController::class, 'showProducto']);
+    Route::post('/productos', [AdminController::class, 'storeProducto']);
+    Route::put('/productos/{id}', [AdminController::class, 'updateProducto']);
+    Route::delete('/productos/{id}', [AdminController::class, 'deleteProducto']);
+});
